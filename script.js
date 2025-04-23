@@ -1,7 +1,8 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const socket = io('https://YOUR-BACKEND-URL-HERE'); // 先保留占位
+const socket = io('https://flappy-server.onrender.com');
+
 
 let playerId = null;
 const players = {};
