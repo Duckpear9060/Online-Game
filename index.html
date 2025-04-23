@@ -1,15 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Flappy Bird</title>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { background-color: lightblue; display: block; margin: auto; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        
+        #gameContainer {
+            text-align: center;
+        }
+        
+        #gameCanvas {
+            background-color: skyblue;
+            border: 2px solid #333;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .instructions {
+            margin-top: 15px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="800" height="600"></canvas>
-  <script src="script.js"></script>
+    <div id="gameContainer">
+        <h1>Flappy Bird</h1>
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <p class="instructions">Press SPACE to jump or click/tap on screen</p>
+    </div>
+
+    <!-- 引入单独的JS文件 -->
+    <script src="game.js"></script>
 </body>
 </html>
