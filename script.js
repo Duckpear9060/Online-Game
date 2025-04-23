@@ -7,46 +7,47 @@ const bird = {
   width: 30,
   height: 30,
   vy: 0,
-  gravity: 0.4,           // ⬅️ 更柔和的下坠速度
-  jumpStrength: -7,
-  alive: false            // ⬅️ 改为初始不活跃（未开始）
+  gravity: 0.25,
+  jumpStrength: -9.5,
+  alive: false
 };
 
 let pipes = [];
 let score = 0;
 let gameStarted = false;
 let frames = 0;
+const pipeGap = 160;
+const pipeSpeed = 2;
 
 document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') {
     if (!gameStarted) {
-      startGame();         // ⬅️ 改为更明确的开始函数
+      gameStarted = true;
+      bird.alive = true;
     }
+
     if (bird.alive) {
       bird.vy = bird.jumpStrength;
+    } else {
+      // 重启逻辑
+      resetGame();
+      gameStarted = true;
+      bird.alive = true;
     }
   }
 });
 
-function startGame() {
-  resetGame();
-  bird.alive = true;
-  gameStarted = true;
-}
-
 function resetGame() {
   bird.y = 300;
   bird.vy = 0;
-  bird.alive = false;
   score = 0;
   pipes = [];
   frames = 0;
 }
 
 function createPipe() {
-  const gap = 140;
   const topHeight = Math.floor(Math.random() * 250) + 50;
-  const bottomY = topHeight + gap;
+  const bottomY = topHeight + pipeGap;
   pipes.push({
     x: canvas.width,
     width: 60,
@@ -61,12 +62,12 @@ function update() {
   bird.vy += bird.gravity;
   bird.y += bird.vy;
 
-  if (frames % 90 === 0) {
+  if (frames % 100 === 0) {
     createPipe();
   }
 
   pipes.forEach(pipe => {
-    pipe.x -= 3;
+    pipe.x -= pipeSpeed;
 
     if (pipe.x + pipe.width === bird.x && bird.alive) {
       score++;
@@ -77,7 +78,7 @@ function update() {
       bird.x + bird.width > pipe.x &&
       (
         bird.y < pipe.top ||
-        bird.y + bird.height > pipe.top + 140
+        bird.y + bird.height > pipe.top + pipeGap
       )
     ) {
       bird.alive = false;
@@ -101,7 +102,7 @@ function draw() {
   ctx.fillStyle = 'green';
   pipes.forEach(pipe => {
     ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
-    ctx.fillRect(pipe.x, pipe.top + 140, pipe.width, pipe.bottom);
+    ctx.fillRect(pipe.x, pipe.top + pipeGap, pipe.width, pipe.bottom);
   });
 
   ctx.fillStyle = 'black';
