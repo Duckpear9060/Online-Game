@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 
 const bird = {
   x: 80,
-  y: 200,
+  y: canvas.height / 2, // 初始位置改为画布中间
   width: 30,
   height: 30,
   gravity: 0.5,
@@ -15,6 +15,7 @@ let pipes = [];
 let frame = 0;
 let score = 0;
 let gameOver = false;
+let animationId = null; // 用于跟踪动画帧
 
 document.addEventListener('keydown', function(e) {
   if (e.code === 'Space') {
@@ -46,7 +47,8 @@ function updatePipes() {
       x: canvas.width,
       width: 50,
       top: top,
-      gap: 140
+      gap: 140,
+      passed: false // 添加passed属性
     });
   }
 
@@ -65,6 +67,11 @@ function checkCollision(pipe) {
 }
 
 function updateGame() {
+  if (gameOver) {
+    cancelAnimationFrame(animationId); // 游戏结束时取消动画
+    return;
+  }
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBird();
   drawPipes();
@@ -91,16 +98,21 @@ function updateGame() {
   ctx.font = '24px Arial';
   ctx.fillText('Score: ' + score, 10, 30);
 
-  if (!gameOver) {
-    frame++;
-    requestAnimationFrame(updateGame);
-  } else {
+  if (gameOver) {
     ctx.fillText('Game Over! Press Space to Restart.', 50, canvas.height / 2);
+  } else {
+    animationId = requestAnimationFrame(updateGame);
   }
+  frame++;
 }
 
 function resetGame() {
-  bird.y = 200;
+  // 取消之前的动画帧
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+  }
+  
+  bird.y = canvas.height / 2; // 重置到中间位置
   bird.velocity = 0;
   pipes = [];
   frame = 0;
@@ -108,5 +120,9 @@ function resetGame() {
   gameOver = false;
   updateGame();
 }
+
+// 确保canvas有正确的大小
+canvas.width = 400;
+canvas.height = 600;
 
 updateGame();
