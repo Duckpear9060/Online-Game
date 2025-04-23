@@ -1,7 +1,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const socket = io('https://flappy-server.onrender.com'); // ✅ 替换为你的 Render 地址
+const socket = io('https://flappy-server.onrender.com'); // 你的后端地址
 
 let playerId = null;
 const players = {};
@@ -27,9 +27,15 @@ socket.on('connect', () => {
 
 socket.on('state', (serverPlayers) => {
   for (let id in serverPlayers) {
-    players[id] = serverPlayers[id];
+    if (!players[id]) {
+      players[id] = { x: 100, y: 300, vy: 0 };
+    }
+    players[id].x = serverPlayers[id].x;
+    players[id].y = serverPlayers[id].y;
+    players[id].vy = serverPlayers[id].vy;
   }
-  log('Received state from server:', serverPlayers);
+
+  log('Players:', Object.keys(serverPlayers));
 });
 
 function drawPlayer(id, player) {
@@ -55,6 +61,9 @@ function gameLoop() {
   if (playerId && players[playerId]) {
     socket.emit('update', players[playerId]);
   }
+
+  // 显示联机玩家数量
+  document.getElementById('debug').innerText = `Players: ${Object.keys(players).length}`;
 
   requestAnimationFrame(gameLoop);
 }

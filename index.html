@@ -1,14 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Multiplayer Flappy</title>
+  <meta charset="UTF-8">
+  <title>Multiplayer Flappy Bird</title>
   <style>
-    canvas { background: skyblue; display: block; margin: 0 auto; }
+    body { margin: 0; overflow: hidden; }
+    canvas { background-color: lightblue; display: block; margin: auto; }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="400" height="600"></canvas>
-  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <div id="debug" style="position:absolute; top:10px; left:10px; background:#fff; padding:5px; font-family:monospace; font-size:14px;"></div>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
