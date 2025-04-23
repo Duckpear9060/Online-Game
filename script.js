@@ -54,7 +54,6 @@ function updatePipes() {
     pipe.x -= 2;
   });
 
-  // 删除已离开屏幕的管道
   pipes = pipes.filter(pipe => pipe.x + pipe.width > 0);
 }
 
@@ -110,5 +109,4 @@ function resetGame() {
   updateGame();
 }
 
-// Start game
 updateGame();
