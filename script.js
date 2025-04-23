@@ -15,6 +15,7 @@ const bird = {
 let pipes = [];
 let score = 0;
 let gameStarted = false;
+let frames = 0;
 
 document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') {
@@ -24,6 +25,10 @@ document.addEventListener('keydown', (e) => {
     }
     if (bird.alive) {
       bird.vy = bird.jumpStrength;
+    } else {
+      // 如果死亡，按空格可以重新开始
+      resetGame();
+      gameStarted = true;
     }
   }
 });
@@ -34,6 +39,7 @@ function resetGame() {
   bird.alive = true;
   score = 0;
   pipes = [];
+  frames = 0;
 }
 
 function createPipe() {
@@ -54,21 +60,18 @@ function update() {
   bird.vy += bird.gravity;
   bird.y += bird.vy;
 
-  // Add new pipe
   if (frames % 90 === 0) {
     createPipe();
   }
 
-  // Update pipes
   pipes.forEach(pipe => {
     pipe.x -= 3;
 
-    // Score
     if (pipe.x + pipe.width === bird.x && bird.alive) {
       score++;
     }
 
-    // Collision
+    // 碰撞检测
     if (
       bird.x < pipe.x + pipe.width &&
       bird.x + bird.width > pipe.x &&
@@ -81,7 +84,7 @@ function update() {
     }
   });
 
-  // Ground collision
+  // 地面/顶部碰撞
   if (bird.y + bird.height > canvas.height || bird.y < 0) {
     bird.alive = false;
   }
@@ -90,29 +93,23 @@ function update() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Background
   ctx.fillStyle = 'lightblue';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Bird
   ctx.fillStyle = bird.alive ? 'red' : 'gray';
   ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
 
-  // Pipes
   ctx.fillStyle = 'green';
   pipes.forEach(pipe => {
     ctx.fillRect(pipe.x, 0, pipe.width, pipe.top);
     ctx.fillRect(pipe.x, pipe.top + 140, pipe.width, pipe.bottom);
   });
 
-  // Score
   ctx.fillStyle = 'black';
   ctx.font = '24px Arial';
   ctx.fillText(`Score: ${score}`, 10, 30);
 
-  // Game over
   if (!bird.alive) {
-    ctx.fillStyle = 'black';
     ctx.font = '36px Arial';
     ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
     ctx.font = '20px Arial';
@@ -120,7 +117,6 @@ function draw() {
   }
 }
 
-let frames = 0;
 function gameLoop() {
   if (gameStarted) {
     update();
