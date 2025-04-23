@@ -1,8 +1,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const socket = io('https://flappy-server.onrender.com');
-
+const socket = io('https://flappy-server.onrender.com'); // ✅ 你的后端地址
 
 let playerId = null;
 const players = {};
@@ -26,15 +25,24 @@ socket.on('state', (serverPlayers) => {
   }
 });
 
+function drawPlayer(id, player) {
+  player.vy += 0.5; // gravity
+  player.y += player.vy;
+
+  const color = id === playerId ? 'red' : 'blue';
+  ctx.fillStyle = color;
+  ctx.fillRect(player.x, player.y, 30, 30);
+
+  ctx.fillStyle = 'black';
+  ctx.font = '12px Arial';
+  ctx.fillText(id.slice(0, 5), player.x, player.y - 10); // 显示 ID 前5位
+}
+
 function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (let id in players) {
-    const p = players[id];
-    p.vy += 0.5; // gravity
-    p.y += p.vy;
 
-    ctx.fillStyle = id === playerId ? 'red' : 'blue';
-    ctx.fillRect(p.x, p.y, 30, 30);
+  for (let id in players) {
+    drawPlayer(id, players[id]);
   }
 
   if (playerId && players[playerId]) {
