@@ -7,9 +7,9 @@ const bird = {
   width: 30,
   height: 30,
   vy: 0,
-  gravity: 0.5,
-  jumpStrength: -8,
-  alive: true
+  gravity: 0.4,           // ⬅️ 更柔和的下坠速度
+  jumpStrength: -7,
+  alive: false            // ⬅️ 改为初始不活跃（未开始）
 };
 
 let pipes = [];
@@ -20,23 +20,24 @@ let frames = 0;
 document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') {
     if (!gameStarted) {
-      resetGame();
-      gameStarted = true;
+      startGame();         // ⬅️ 改为更明确的开始函数
     }
     if (bird.alive) {
       bird.vy = bird.jumpStrength;
-    } else {
-      // 如果死亡，按空格可以重新开始
-      resetGame();
-      gameStarted = true;
     }
   }
 });
 
+function startGame() {
+  resetGame();
+  bird.alive = true;
+  gameStarted = true;
+}
+
 function resetGame() {
   bird.y = 300;
   bird.vy = 0;
-  bird.alive = true;
+  bird.alive = false;
   score = 0;
   pipes = [];
   frames = 0;
@@ -71,7 +72,6 @@ function update() {
       score++;
     }
 
-    // 碰撞检测
     if (
       bird.x < pipe.x + pipe.width &&
       bird.x + bird.width > pipe.x &&
@@ -84,7 +84,6 @@ function update() {
     }
   });
 
-  // 地面/顶部碰撞
   if (bird.y + bird.height > canvas.height || bird.y < 0) {
     bird.alive = false;
   }
@@ -109,11 +108,16 @@ function draw() {
   ctx.font = '24px Arial';
   ctx.fillText(`Score: ${score}`, 10, 30);
 
-  if (!bird.alive) {
+  if (!bird.alive && gameStarted) {
     ctx.font = '36px Arial';
     ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2);
     ctx.font = '20px Arial';
     ctx.fillText("Press Space to Restart", canvas.width / 2 - 110, canvas.height / 2 + 30);
+  }
+
+  if (!gameStarted) {
+    ctx.font = '32px Arial';
+    ctx.fillText("Press Space to Start", canvas.width / 2 - 130, canvas.height / 2 - 40);
   }
 }
 
@@ -127,3 +131,4 @@ function gameLoop() {
 }
 
 gameLoop();
+
