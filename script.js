@@ -7,8 +7,8 @@ const bird = {
   width: 30,
   height: 30,
   vy: 0,
-  gravity: 0.25,
-  jumpStrength: -9.5,
+  gravity: 0.6,
+  jumpStrength: -8,
   alive: false
 };
 
@@ -21,18 +21,12 @@ const pipeSpeed = 2;
 
 document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') {
-    if (!gameStarted) {
-      gameStarted = true;
-      bird.alive = true;
-    }
-
-    if (bird.alive) {
-      bird.vy = bird.jumpStrength;
-    } else {
-      // 重启逻辑
+    if (!gameStarted || !bird.alive) {
       resetGame();
       gameStarted = true;
       bird.alive = true;
+    } else if (bird.alive) {
+      bird.vy = bird.jumpStrength;
     }
   }
 });
@@ -57,8 +51,8 @@ function createPipe() {
 }
 
 function update() {
-  if (!bird.alive) return;
-
+  if (!bird.alive) return; // 死了就不更新，但允许绘图
+  
   bird.vy += bird.gravity;
   bird.y += bird.vy;
 
@@ -69,8 +63,10 @@ function update() {
   pipes.forEach(pipe => {
     pipe.x -= pipeSpeed;
 
-    if (pipe.x + pipe.width === bird.x && bird.alive) {
+    // 加分条件可以稍微宽松一些（避免 ===）
+    if (pipe.x + pipe.width < bird.x && !pipe.passed) {
       score++;
+      pipe.passed = true; // 添加一个标志避免多次加分
     }
 
     if (
@@ -85,6 +81,7 @@ function update() {
     }
   });
 
+  // 超出边界死亡
   if (bird.y + bird.height > canvas.height || bird.y < 0) {
     bird.alive = false;
   }
